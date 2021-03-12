@@ -9,7 +9,7 @@ Project for Basics of Computer Graphics course at [FCSE](https://finki.ukim.mk/)
 ## Setup
   Recursively clone the repository:
 
-    git clone --recursive https://github.com/joksim/OpenGLPrj.git
+    git clone --recursive https://github.com/ivostojanov/OpenGLPrj.git
     
   If you are using an IDE that supports CMake builds (QtCreator, Jetbrains CLion, Visual Studio), open the cloned directory as project (the directory `OpenGLPrj` with the `CMakeLists.txt` file).
 
