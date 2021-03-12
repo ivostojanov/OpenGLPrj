@@ -67,6 +67,7 @@ int main()
     int success;
     char infoLog[512];
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    //this comment was not here :))))))
     if (!success)
     {
         glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
