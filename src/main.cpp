@@ -109,7 +109,7 @@ int main()
     float const PI = glm::pi<float>();
 
     // Starting angle is not 0, but PI/8
-    float baseangle = PI/2/9/10; // 180/2=90/9=10/2=5 degrees
+    float baseangle = PI/2; // 180/2=90/9=10/2=5 degrees
     float angle = 0; // we are starting at 0 degrees
     int numberOfVertices = round((2*PI)/baseangle) + 2;//number of vertices, 2 is added for the central vertex and the ending vertex duplicate
     // we are basically only tweaking the base angle
