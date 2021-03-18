@@ -23,7 +23,7 @@ static const char *fragmentShaderSource = "#version 330 core\n"
     "out vec4 FragColor;\n"
     "void main()\n"
     "{\n"
-    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+    "   FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);\n"
     "}\n\0";
 
 int main()
@@ -106,18 +106,37 @@ int main()
     std::vector<float> vertices;
 
     float const PI_OVER_4 = glm::quarter_pi<float>();
+    float const PI = glm::pi<float>();
 
     // Starting angle is not 0, but PI/8
-    float angle = PI_OVER_4/2.0f;
+    float baseangle = PI/2/9/10; // 180/2=90/9=10/2=5 degrees
+    float angle = 0; // we are starting at 0 degrees
+    int numberOfVertices = round((2*PI)/baseangle) + 2;//number of vertices, 2 is added for the central vertex and the ending vertex duplicate
+    // we are basically only tweaking the base angle
 
-    for (auto i=0; i<3; ++i)
-        vertices.push_back(0.0f);
+    //value for the scaling of the circle
+    float scaling = 0.7f;
 
-    for (auto i=0; i<9; ++i) {
-        vertices.push_back(glm::cos(angle));
-        vertices.push_back(glm::sin(angle));
+    //first adding the central vertex in coordinates(0,0,0)
+    for (auto i = 0; i < 3; i++) {
         vertices.push_back(0.0f);
-        angle += PI_OVER_4;
+    }
+
+    printf("x, y, z\n");
+    //central vertex is already added so we are substracting 1
+    for (auto i=0; i<numberOfVertices-1; i++) {
+        float x = cos(angle) * scaling; //projection on the X axis
+        float y = sin(angle) * scaling; //projection on the Y axis
+        float z = 0.0f; //we are still dealing with 2D
+
+        vertices.push_back(x);//x
+        vertices.push_back(y);//y
+        vertices.push_back(z);//z
+
+        //printing the coordinates
+        printf("%.2f %.2f %.2f\n", x, y, z);
+
+        angle += baseangle;
     }
 
     unsigned int VBO, VAO;
@@ -154,13 +173,13 @@ int main()
 
         // render
         // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw our first triangle
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 9);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, numberOfVertices);
         // glBindVertexArray(0); // no need to unbind it every time
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
