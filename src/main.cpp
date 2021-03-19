@@ -25,6 +25,12 @@ static const char *fragmentShaderSource = "#version 330 core\n"
     "{\n"
     "   FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n"
     "}\n\0";
+static const char* fragmentShaderSource2 = "#version 330 core\n"
+"out vec4 FragColor;\n"
+"void main()\n"
+"{\n"
+"   FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);\n"
+"}\n\0";
 
 int main()
 {
@@ -79,6 +85,10 @@ int main()
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
     glCompileShader(fragmentShader);
+    //second fragment shader
+    GLuint fragmentShader2 = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader2, 1, &fragmentShaderSource2, nullptr);
+    glCompileShader(fragmentShader2);
     // check for shader compile errors
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
     if (!success)
@@ -91,6 +101,13 @@ int main()
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
+    
+    //Creating the second shader program
+    GLuint shaderProgram2 = glCreateProgram();
+    glAttachShader(shaderProgram2, vertexShader);
+    glAttachShader(shaderProgram2, fragmentShader2);
+    glLinkProgram(shaderProgram2);
+
     // check for linking errors
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
     if (!success) {
@@ -117,18 +134,19 @@ int main()
     // we are basically only tweaking the base angle
 
     //value for the scaling of the circle
-    float scaling = 1.0f;
+    float scaling = 0.5f;
 
     //first adding the central vertex in coordinates(0,0,0)
-    /*for (auto i = 0; i < 3; i++) {
-        vertices.push_back(0.0f);
-    }*/
+    for (auto i = 0; i < 3; i++) {
+        outsidevertices.push_back(0.0f);
+        //insidevertices.push_back(0.0f);
+    }
 
     printf("x, y, z\n");
     //calculating the outside vertices
-    for (auto i = 0; i < 3; i++) {
-        float x = cos(angle)*scaling; //projection on the X axis
-        float y = sin(angle)*scaling; //projection on the Y axis
+    for (auto i = 0; i < 4; i++) {
+        float x = cos(angle); //projection on the X axis
+        float y = sin(angle); //projection on the Y axis
         float z = 0.0f; //we are still dealing with 2D
 
         outsidevertices.push_back(x);//x
@@ -140,11 +158,11 @@ int main()
 
     //initialize baseangle, angle
     baseangle = PI / 3;
-    angle = baseangle;
-    scaling = 0.50f;
+    angle = 0;
+    scaling = 0.65f;
 
     //calculating the inside vertices
-    for (auto i = 0; i < 6; i++) {
+    for (auto i = 0; i < 7; i++) {
         float x = cos(angle)*scaling;
         float y = sin(angle)*scaling;
         float z = 0.0f;
@@ -157,36 +175,19 @@ int main()
     }
 
     //combining both inside and outside vertices
-    int temp_index = 0;
-    for (auto i = 0; i < insidevertices.size(); i+=6) {
-        
-        //lower triangle
-        vertices.push_back(0.0f);
-        vertices.push_back(0.0f);
-        vertices.push_back(0.0f);
-        
-        vertices.push_back(insidevertices[i]);
-        vertices.push_back(insidevertices[i+1]);
-        vertices.push_back(insidevertices[i+2]);
+    for (auto i = 0; i < outsidevertices.size(); i++) {
+        vertices.push_back(outsidevertices[i]);        
+    }
+    for (auto i = 0; i < insidevertices.size()-6; i+=6) {
 
-        vertices.push_back(insidevertices[i+3]);
-        vertices.push_back(insidevertices[i+4]);
-        vertices.push_back(insidevertices[i+5]);
-        
-        //upper triangle          
-        vertices.push_back(insidevertices[i]);
-        vertices.push_back(insidevertices[i + 1]);
-        vertices.push_back(insidevertices[i + 2]);
+        for (auto zero = 0; zero < 3; zero++) {
+            vertices.push_back(0.0f);
+        }
 
-        vertices.push_back(insidevertices[i + 3]);
-        vertices.push_back(insidevertices[i + 4]);
-        vertices.push_back(insidevertices[i + 5]);
+        for (auto f = i; f < i+6; f++) {
+            vertices.push_back(insidevertices[f]);
+        }
 
-        vertices.push_back(outsidevertices[temp_index]);
-        vertices.push_back(outsidevertices[temp_index + 1]);
-        vertices.push_back(outsidevertices[temp_index + 2]);
-        
-        temp_index += 3;
     }
 
     unsigned int VBO, VAO;
@@ -229,7 +230,12 @@ int main()
         // draw our first triangle
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        glDrawArrays(GL_TRIANGLES, 0, (vertices.size()/3));
+        glDrawArrays(GL_TRIANGLE_FAN, 0, outsidevertices.size()/3);
+
+        //white triangles
+        glUseProgram(shaderProgram2);
+        glDrawArrays(GL_TRIANGLES, outsidevertices.size()/3, (vertices.size()/3)-(outsidevertices.size()/3));
+
         // glBindVertexArray(0); // no need to unbind it every time
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
