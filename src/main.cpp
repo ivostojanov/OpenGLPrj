@@ -23,7 +23,7 @@ static const char *fragmentShaderSource = "#version 330 core\n"
     "out vec4 FragColor;\n"
     "void main()\n"
     "{\n"
-    "   FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n"
+    "   FragColor = vec4(255.0f/255.0f, 128.0f/255.0f, 51.0f/255.0f, 1.0f);\n"
     "}\n\0";
 static const char* fragmentShaderSource2 = "#version 330 core\n"
 "out vec4 FragColor;\n"
@@ -120,74 +120,85 @@ int main()
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
 
-    std::vector<float> outsidevertices;
-    std::vector<float> insidevertices;
     std::vector<float> vertices;
+    std::vector<float> linevertices;
 
     float const PI_OVER_4 = glm::quarter_pi<float>();
     float const PI = glm::pi<float>();
 
     // Starting angle is not 0, but PI/8
-    float baseangle = PI * 2 / 3; // 180/2=90/9=10/2=5 degrees
-    float angle = PI / 2; // we are starting at 0 degrees
+    float baseangle = PI/2/3; // 180/2=90/9=10/2=5 degrees
+    float angle = baseangle*(-1); // we are starting at 0 degrees
     //int numberOfVertices = round((2 * PI) / baseangle) + 2;//number of vertices, 2 is added for the central vertex and the ending vertex duplicate
     // we are basically only tweaking the base angle
 
     //value for the scaling of the circle
-    float scaling = 0.5f;
-
-    //first adding the central vertex in coordinates(0,0,0)
-    for (auto i = 0; i < 3; i++) {
-        outsidevertices.push_back(0.0f);
-        //insidevertices.push_back(0.0f);
-    }
-
-    printf("x, y, z\n");
+    float scaling = 0.5f;   
+    float outtervertexangle = 0;
     //calculating the outside vertices
     for (auto i = 0; i < 4; i++) {
-        float x = cos(angle); //projection on the X axis
-        float y = sin(angle); //projection on the Y axis
-        float z = 0.0f; //we are still dealing with 2D
 
-        outsidevertices.push_back(x);//x
-        outsidevertices.push_back(y);//y
-        outsidevertices.push_back(z);//z        
-
-        angle += baseangle;
-    }
-
-    //initialize baseangle, angle
-    baseangle = PI / 3;
-    angle = 0;
-    scaling = 0.65f;
-
-    //calculating the inside vertices
-    for (auto i = 0; i < 7; i++) {
-        float x = cos(angle)*scaling;
-        float y = sin(angle)*scaling;
-        float z = 0.0f;
-
-        insidevertices.push_back(x);
-        insidevertices.push_back(y);
-        insidevertices.push_back(z);
-
-        angle += baseangle;
-    }
-
-    //combining both inside and outside vertices
-    for (auto i = 0; i < outsidevertices.size(); i++) {
-        vertices.push_back(outsidevertices[i]);        
-    }
-    for (auto i = 0; i < insidevertices.size()-6; i+=6) {
-
-        for (auto zero = 0; zero < 3; zero++) {
+        //first adding the central vertex in coordinates(0,0,0)
+        for (auto i = 0; i < 3; i++) {
             vertices.push_back(0.0f);
         }
 
-        for (auto f = i; f < i+6; f++) {
-            vertices.push_back(insidevertices[f]);
-        }
+        float x = cos(angle)*scaling; //projection on the X axis
+        float y = sin(angle)*scaling; //projection on the Y axis
+        float z = 0.0f; //we are still dealing with 2D
 
+        vertices.push_back(x);//x
+        vertices.push_back(y);//y
+        vertices.push_back(z);//z   
+
+        linevertices.push_back(x);
+        linevertices.push_back(y);
+        linevertices.push_back(z);
+
+        linevertices.push_back(cos(outtervertexangle - PI / 4));
+        linevertices.push_back(sin(outtervertexangle - PI / 4));
+        linevertices.push_back(0.0f);
+
+        angle += baseangle*2;//60 degrees in the upper direction
+
+        x = cos(angle) * scaling; //projection on the X axis
+        y = sin(angle) * scaling; //projection on the Y axis
+        z = 0.0f; //we are still dealing with 2D
+
+        vertices.push_back(x);//x
+        vertices.push_back(y);//y
+        vertices.push_back(z);//z
+
+        linevertices.push_back(x);
+        linevertices.push_back(y);
+        linevertices.push_back(z);
+
+        linevertices.push_back(cos(outtervertexangle + PI / 4));
+        linevertices.push_back(sin(outtervertexangle + PI / 4));
+        linevertices.push_back(0.0f);
+
+        angle += baseangle;
+
+        //upper vertex
+        x = cos(outtervertexangle);
+        y = sin(outtervertexangle);
+        z = 0.0f;
+
+        vertices.push_back(x);//x
+        vertices.push_back(y);//y
+        vertices.push_back(z);//z               
+
+        outtervertexangle += (PI / 2);
+
+        //ending by adding the central vertex in coordinates(0,0,0)
+        for (auto i = 0; i < 3; i++) {
+            vertices.push_back(0.0f);
+        }
+    }
+
+    //combining both inside and outside vertices
+    for (auto i = 0; i < linevertices.size(); i++) {
+        vertices.push_back(linevertices[i]);
     }
 
     unsigned int VBO, VAO;
@@ -224,17 +235,17 @@ int main()
 
         // render
         // ------
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClearColor(51.0f/255.0f, 76.0f/255.0f, 76.0f / 255.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw our first triangle
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        glDrawArrays(GL_TRIANGLE_FAN, 0, outsidevertices.size()/3);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, (vertices.size()/3)-(linevertices.size()/3));
 
         //white triangles
-        glUseProgram(shaderProgram2);
-        glDrawArrays(GL_TRIANGLES, outsidevertices.size()/3, (vertices.size()/3)-(outsidevertices.size()/3));
+        //glUseProgram(shaderProgram2);
+        glDrawArrays(GL_LINES, (vertices.size() / 3) - (linevertices.size() / 3), linevertices.size()/3);
 
         // glBindVertexArray(0); // no need to unbind it every time
 
