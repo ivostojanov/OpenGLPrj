@@ -68,12 +68,13 @@ int main()
 
     float letter_i[] = {
         // positions         // colors
-        0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
-         0.0f,  1.0f, 0.0f,  0.0f, 0.0f, 1.0f   // top
+        -0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  // top left
+        -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  // bottom left
+        -0.4f, 0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   // top right
+        -0.4f,-0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // bottom right
     };
 
-    for (auto i = 0; i < 3 * 6; i++) {
+    for (auto i = 0; i < 4 * 6; i++) {
         vertices.push_back(letter_i[i]);
     }
 
@@ -116,10 +117,14 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        //setting the uniform color via code
+        int vertexColorLocation = glGetUniformLocation(ourShader.ID, "uniformColor");//setting the global uniform value of the fragment shader
+        ourShader.use();
+        glUniform4f(vertexColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);//setting the color of our logo to red
         // render the triangle
         ourShader.use();
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size()/6);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
