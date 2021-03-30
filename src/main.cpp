@@ -7,6 +7,8 @@
 #include <iostream>
 #include <cstring>
 
+#include <vector>
+
 
 const std::string program_name = ("GLSL Shader class example");
 
@@ -60,13 +62,20 @@ int main()
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-        float vertices[] = {
-        // positions         // colors
-         0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
-         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top
 
+    std::vector<float> vertices;
+    std::vector<float> letter_o;
+
+    float letter_i[] = {
+        // positions         // colors
+        0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  // bottom right
+        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
+         0.0f,  1.0f, 0.0f,  0.0f, 0.0f, 1.0f   // top
     };
+
+    for (auto i = 0; i < 3 * 6; i++) {
+        vertices.push_back(letter_i[i]);
+    }
 
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
@@ -75,7 +84,7 @@ int main()
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(float), &vertices[0], GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), static_cast<void*>(nullptr));
     glEnableVertexAttribArray(0);
