@@ -1,1 +1,4 @@
 [Bb]uild/
+#Ignore the folder that visual studio generates
+.vs/
+/.vs
