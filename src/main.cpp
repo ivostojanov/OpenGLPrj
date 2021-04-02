@@ -7,7 +7,10 @@
 #include <iostream>
 #include <cstring>
 
+#include <glm/gtc/constants.hpp>
+#include <glm/trigonometric.hpp>
 #include <vector>
+#include <iostream>
 
 
 const std::string program_name = ("GLSL Shader class example");
@@ -65,18 +68,68 @@ int main()
 
     std::vector<float> vertices;
     std::vector<float> letter_o;
+    std::vector<float> letter_o_inside;
 
     float letter_i[] = {
         // positions         // colors
-        -0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  // top left
-        -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  // bottom left
-        -0.4f, 0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   // top right
-        -0.4f,-0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // bottom right
+        -0.60f,  0.5f, 0.0f,  // top left
+        -0.60f, -0.5f, 0.0f, // bottom left
+        -0.40f, 0.5f, 0.0f,  // top right
+        -0.40f,-0.5f, 0.0f    // bottom right
     };
 
-    for (auto i = 0; i < 4 * 6; i++) {
+    for (auto i = 0; i < 4 * 3; i++) {
         vertices.push_back(letter_i[i]);
     }
+
+    float PI = glm::pi<float>();
+    float base_angle = PI / 2 / 9 / 2;
+    float angle = 0;
+    float number_of_vertices = (PI * 2)/base_angle;//using a 5 degrees angle
+    float scaling = 0.55f;
+    float offsetx = 0.3f;
+    float offsety = 0.0f;
+
+    for (auto i = 0; i < 3; i++) {
+        letter_o.push_back(0.0f);
+    }
+
+    for (auto i = 0; i < number_of_vertices+1; i++) {
+        float x = cos(angle) * scaling + offsetx;
+        float y = sin(angle) * scaling + offsety;
+        float z = 0.0f;
+
+        letter_o.push_back(x);
+        letter_o.push_back(y);
+        letter_o.push_back(z);
+
+        angle += base_angle;
+    }
+
+    angle = 0;
+    scaling = 0.35f;
+    for (auto i = 0; i < number_of_vertices+1; i++) {
+        float x = cos(angle) * scaling + offsetx;
+        float y = sin(angle) * scaling + offsety;
+        float z = 0.0f;
+
+        letter_o_inside.push_back(x);
+        letter_o_inside.push_back(y);
+        letter_o_inside.push_back(z);
+
+        angle += base_angle;
+    }
+
+    //transfering all the vertices to the vertices list
+    for (auto i = 0; i < letter_o.size(); i++) {
+        vertices.push_back(letter_o[i]);
+    }
+
+    for (auto i = 0; i < letter_o_inside.size(); i++) {
+        vertices.push_back(letter_o_inside[i]);
+    }
+
+    //transfering all
 
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
@@ -87,11 +140,11 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(float), &vertices[0], GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), static_cast<void*>(nullptr));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), static_cast<void*>(nullptr));
     glEnableVertexAttribArray(0);
 
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
@@ -114,17 +167,25 @@ int main()
 
         // render
         // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         //setting the uniform color via code
         int vertexColorLocation = glGetUniformLocation(ourShader.ID, "uniformColor");//setting the global uniform value of the fragment shader
         ourShader.use();
-        glUniform4f(vertexColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);//setting the color of our logo to red
-        // render the triangle
-        ourShader.use();
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size()/6);
+
+        glUniform4f(vertexColorLocation, 18.8f/255.0f, 15.7f/255.0f, 55.6f/255.0f, 1.0f);//setting the color of our logo to red        
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+        //drawing the blue part of the letter o        
+        glUniform4f(vertexColorLocation, 8.0f / 255.0f, 59.4f / 255.0f, 91.9f / 255.0f, 1.0f);
+        glDrawArrays(GL_TRIANGLE_FAN, 4, (letter_o.size()) / 3);
+
+        //drawing a white circle inside of our blue circle
+        glUniform4f(vertexColorLocation, 1.0f, 1.0f , 1.0f, 1.0f);
+        glDrawArrays(GL_TRIANGLE_FAN, 4+(letter_o.size()/3), (letter_o_inside.size()) / 3);
+
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
