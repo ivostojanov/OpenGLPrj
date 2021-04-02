@@ -91,7 +91,10 @@ int main()
     float offsety = 0.0f;
 
     for (auto i = 0; i < 3; i++) {
-        letter_o.push_back(0.0f);
+        if(i==0)
+            letter_o.push_back(0.0f+offsetx);
+        else
+            letter_o.push_back(0.0f);
     }
 
     for (auto i = 0; i < number_of_vertices+1; i++) {
@@ -156,6 +159,8 @@ int main()
     // just bind it beforehand before rendering the respective triangle; this is another approach.
     glBindVertexArray(VAO);
 
+    // uncomment this call to draw in wireframe polygons.
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // render loop
     // -----------
