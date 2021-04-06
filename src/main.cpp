@@ -67,7 +67,7 @@ int main()
     std::vector<float> circle;
 
     float PI = glm::pi<float>();
-    float base_angle = PI / 2 / 9 / 2;
+    float base_angle = PI / 2 / 9 / 2 / 5;
     float angle = 0;
     float number_of_vertices = (PI * 2) / base_angle;//using a 5 degrees angle
     float scaling = 0.8f;
@@ -80,14 +80,12 @@ int main()
         circle.push_back(0.0f);
     }
 
-    float red = 1.0f;
-    float green = 1.0f;
+    float red = 0.0f;
+    float green = 0.0f;
     float blue = 0.0f;
 
     float sixty_degrees = (PI / 3);
-    float thirty_degrees = sixty_degrees / 2;
-
-    float offset = 0.0f;
+    float thirty_degrees = sixty_degrees / 2;    
 
     //calculating vertices for the circle
     for (auto i = 0; i < number_of_vertices + 1; i++) {
@@ -99,11 +97,52 @@ int main()
         circle.push_back(x);
         circle.push_back(y);
         circle.push_back(z);
-        
+                
+        if (angle <= sixty_degrees) {            
+            red = 1.0f;
+            green = angle/sixty_degrees;
+            blue = 0.0f;
+        }
+        else if (angle <= sixty_degrees * 2) {
+            red = 1.0f-((angle-sixty_degrees) / sixty_degrees);
+            green = 1.0f;
+            blue = 0.0f;
+        }
+        else if (angle <= sixty_degrees * 3) {
+            red = 0.0f;
+            green = 1.0f;
+            blue = (angle-(sixty_degrees*2))/sixty_degrees;
+        }
+        else if (angle <= sixty_degrees * 4) {
+            red = 0.0f;
+            green = 1.0f - ((angle - sixty_degrees*3) / sixty_degrees);
+            blue = 1.0f;
+        }
+        else if (angle <= sixty_degrees * 5) {
+            red = (angle - (sixty_degrees * 4)) / sixty_degrees;;
+            green = 0.0f;
+            blue = 1.0f;
+        }
+        else if (angle <= sixty_degrees * 6) {
+            red = 1.0f;
+            green = 0.0f;
+            blue = 1.0f - ((angle - sixty_degrees*5) / sixty_degrees);
+        }
+
         //colors
         circle.push_back(red);
         circle.push_back(green);
         circle.push_back(blue);
+
+        if (i % 2 == 0) {
+            circle.push_back(0.0f);
+            circle.push_back(0.0f);
+            circle.push_back(0.0f);
+
+            circle.push_back(red);
+            circle.push_back(green);
+            circle.push_back(blue);
+        }
 
         angle += base_angle;
     }
@@ -155,7 +194,7 @@ int main()
         // render the triangle
         ourShader.use();
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, vertices.size()/6);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size()/6);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
