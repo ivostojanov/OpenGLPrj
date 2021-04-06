@@ -64,92 +64,39 @@ int main()
     // ------------------------------------------------------------------
 
     std::vector<float> vertices;
-    std::vector<float> circle;
-
-    float PI = glm::pi<float>();
-    float base_angle = PI / 2 / 9 / 2 / 5;
-    float angle = 0;
-    float number_of_vertices = (PI * 2) / base_angle;//using a 5 degrees angle
-    float scaling = 0.8f;
-
-    for (auto i = 0; i < 3; i++) {
-        circle.push_back(0.0f);
-    }
-
-    for (auto i = 0; i < 3; i++) {
-        circle.push_back(0.0f);
-    }
+        
+    float number_of_steps = 10.0f;
+    float color_step = 1.0f / number_of_steps;        
 
     float red = 0.0f;
     float green = 0.0f;
     float blue = 0.0f;
 
-    float sixty_degrees = (PI / 3);
-    float thirty_degrees = sixty_degrees / 2;    
+    float offsetx = -1.0f;
+    float offsety = 0.5f;
+    for (auto i = 0; i < number_of_steps; i++) {       
+        vertices.push_back(offsetx);
+        vertices.push_back(offsety);
+        vertices.push_back(0.0f);
 
-    //calculating vertices for the circle
-    for (auto i = 0; i < number_of_vertices + 1; i++) {
-        float x = cos(angle) * scaling;
-        float y = sin(angle) * scaling;
-        float z = 0.0f;
+        vertices.push_back(red);
+        vertices.push_back(green);
+        vertices.push_back(blue);
 
-        //positions
-        circle.push_back(x);
-        circle.push_back(y);
-        circle.push_back(z);
-                
-        if (angle <= sixty_degrees) {            
-            red = 1.0f;
-            green = angle/sixty_degrees;
-            blue = 0.0f;
-        }
-        else if (angle <= sixty_degrees * 2) {
-            red = 1.0f-((angle-sixty_degrees) / sixty_degrees);
-            green = 1.0f;
-            blue = 0.0f;
-        }
-        else if (angle <= sixty_degrees * 3) {
-            red = 0.0f;
-            green = 1.0f;
-            blue = (angle-(sixty_degrees*2))/sixty_degrees;
-        }
-        else if (angle <= sixty_degrees * 4) {
-            red = 0.0f;
-            green = 1.0f - ((angle - sixty_degrees*3) / sixty_degrees);
-            blue = 1.0f;
-        }
-        else if (angle <= sixty_degrees * 5) {
-            red = (angle - (sixty_degrees * 4)) / sixty_degrees;;
-            green = 0.0f;
-            blue = 1.0f;
-        }
-        else if (angle <= sixty_degrees * 6) {
-            red = 1.0f;
-            green = 0.0f;
-            blue = 1.0f - ((angle - sixty_degrees*5) / sixty_degrees);
-        }
+        offsety *= (-1);
 
-        //colors
-        circle.push_back(red);
-        circle.push_back(green);
-        circle.push_back(blue);
+        vertices.push_back(offsetx);
+        vertices.push_back(offsety);
+        vertices.push_back(0.0f);
 
-        if (i % 2 == 0) {
-            circle.push_back(0.0f);
-            circle.push_back(0.0f);
-            circle.push_back(0.0f);
+        vertices.push_back(red);
+        vertices.push_back(green);
+        vertices.push_back(blue);
 
-            circle.push_back(green);
-            circle.push_back(red);
-            circle.push_back(blue);
-        }
+        offsety *= (-1);
 
-        angle += base_angle;
-    }
-
-    //combining all the arrays/lists into vertices
-    for (auto i = 0; i < circle.size(); i++) {
-        vertices.push_back(circle[i]);
+        offsetx += 0.10f;        
+        red += color_step;
     }
 
     unsigned int VBO, VAO;
@@ -188,7 +135,7 @@ int main()
 
         // render
         // ------
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         // render the triangle
