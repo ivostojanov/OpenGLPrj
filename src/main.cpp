@@ -139,8 +139,8 @@ int main()
             circle.push_back(0.0f);
             circle.push_back(0.0f);
 
-            circle.push_back(red);
             circle.push_back(green);
+            circle.push_back(red);
             circle.push_back(blue);
         }
 
