@@ -65,7 +65,7 @@ int main()
 
     std::vector<float> vertices;
         
-    float number_of_steps = 10.0f;
+    float number_of_steps = 11.0f;
     float color_step = 1.0f / number_of_steps;        
 
     float red = 0.0f;
@@ -73,7 +73,7 @@ int main()
     float blue = 0.0f;
 
     float offsetx = -1.0f;
-    float offsety = 0.5f;
+    float offsety = 1.0f;
     for (auto i = 0; i < number_of_steps; i++) {       
         vertices.push_back(offsetx);
         vertices.push_back(offsety);
@@ -95,7 +95,7 @@ int main()
 
         offsety *= (-1);
 
-        offsetx += 0.10f;        
+        offsetx += 0.20f;        
         red += color_step;
     }
 
@@ -124,6 +124,9 @@ int main()
     // just bind it beforehand before rendering the respective triangle; this is another approach.
     glBindVertexArray(VAO);
 
+    // uncomment this call to draw in wireframe polygons.
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 
     // render loop
     // -----------
@@ -135,7 +138,7 @@ int main()
 
         // render
         // ------
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         // render the triangle
