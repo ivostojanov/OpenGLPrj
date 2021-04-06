@@ -64,18 +64,53 @@ int main()
     // ------------------------------------------------------------------
 
     std::vector<float> vertices;
-    std::vector<float> letter_o;
+    std::vector<float> circle;
 
-    float letter_i[] = {
-        // positions         // colors
-        -0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  // top left
-        -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  // bottom left
-        -0.4f, 0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   // top right
-        -0.4f,-0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // bottom right
-    };
+    float PI = glm::pi<float>();
+    float base_angle = PI / 2 / 9 / 2;
+    float angle = 0;
+    float number_of_vertices = (PI * 2) / base_angle;//using a 5 degrees angle
+    float scaling = 0.8f;
 
-    for (auto i = 0; i < 4 * 6; i++) {
-        vertices.push_back(letter_i[i]);
+    for (auto i = 0; i < 3; i++) {
+        circle.push_back(0.0f);
+    }
+
+    for (auto i = 0; i < 3; i++) {
+        circle.push_back(0.0f);
+    }
+
+    float red = 1.0f;
+    float green = 1.0f;
+    float blue = 0.0f;
+
+    float sixty_degrees = (PI / 3);
+    float thirty_degrees = sixty_degrees / 2;
+
+    float offset = 0.0f;
+
+    //calculating vertices for the circle
+    for (auto i = 0; i < number_of_vertices + 1; i++) {
+        float x = cos(angle) * scaling;
+        float y = sin(angle) * scaling;
+        float z = 0.0f;
+
+        //positions
+        circle.push_back(x);
+        circle.push_back(y);
+        circle.push_back(z);
+        
+        //colors
+        circle.push_back(red);
+        circle.push_back(green);
+        circle.push_back(blue);
+
+        angle += base_angle;
+    }
+
+    //combining all the arrays/lists into vertices
+    for (auto i = 0; i < circle.size(); i++) {
+        vertices.push_back(circle[i]);
     }
 
     unsigned int VBO, VAO;
@@ -114,17 +149,13 @@ int main()
 
         // render
         // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        //setting the uniform color via code
-        int vertexColorLocation = glGetUniformLocation(ourShader.ID, "uniformColor");//setting the global uniform value of the fragment shader
-        ourShader.use();
-        glUniform4f(vertexColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);//setting the color of our logo to red
         // render the triangle
         ourShader.use();
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size()/6);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, vertices.size()/6);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
