@@ -73,8 +73,6 @@ int main()
     };
 
     unsigned int indices[] = {
-        //0, 1, 2, // first triangle
-        //2, 3, 1  // second triangle
         0,1,2
     };
 
