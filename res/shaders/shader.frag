@@ -10,7 +10,7 @@ uniform sampler2D texture1;
 vec4 white_square = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 vec4 black_square = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
-int grid = 4;
+uniform int grid;
 
 void main()
 {
