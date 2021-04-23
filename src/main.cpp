@@ -149,6 +149,10 @@ int main()
         // bind Texture
         glBindTexture(GL_TEXTURE_2D, texture);
 
+        //setting the uniform for the rows and collumns
+        int vertexColorLocation = glGetUniformLocation(ourShader.ID, "grid");
+        glUniform1i(vertexColorLocation, 10);
+
         // render container
         ourShader.use();
         glBindVertexArray(VAO);
