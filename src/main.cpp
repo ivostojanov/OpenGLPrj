@@ -151,7 +151,7 @@ int main()
 
         //setting the uniform for the rows and collumns
         int vertexColorLocation = glGetUniformLocation(ourShader.ID, "grid");
-        glUniform1i(vertexColorLocation, 10);
+        glUniform1i(vertexColorLocation, 20);
 
         // render container
         ourShader.use();
