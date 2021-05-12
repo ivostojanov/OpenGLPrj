@@ -8,7 +8,6 @@
 #include <string>
 #include <vector>
 #include <string>
-using namespace std;
 
 const std::string program_name = ("Pac-Man Movement");
 
@@ -21,7 +20,7 @@ const unsigned int SCR_HEIGHT = 800;
 
 glm::mat4 position = glm::mat4(1.0f);
 
-string pacman_direction = "right";
+std::string pacman_direction = "right";
 float speed = 0.5f;
 float rotation_angle = 0.0f;
 
