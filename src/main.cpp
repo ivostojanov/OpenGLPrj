@@ -265,13 +265,13 @@ void processInput(GLFWwindow *window) {
     glfwSetWindowShouldClose(window, true);
 
   //inputs for the pacman character movement
-  if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+  if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
       pacman_direction = "up";
-  else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+  else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
       pacman_direction = "down";
-  else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+  else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
       pacman_direction = "left";
-  else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+  else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
       pacman_direction = "right";
   else
       pacman_direction = "none";
