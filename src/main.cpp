@@ -7,8 +7,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <string>
+using namespace std;
 
-const std::string program_name = ("Transformation basics");
+const std::string program_name = ("Pac-Man Movement");
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -16,6 +18,16 @@ void processInput(GLFWwindow *window);
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 800;
+
+glm::mat4 position = glm::mat4(1.0f);
+
+string pacman_direction = "right";
+float speed = 0.5f;
+float rotation_angle = 0.0f;
+
+float delta_time = 0.0f;
+float previous_frame = glfwGetTime();
+
 
 int main() {
   // glfw: initialize and configure
@@ -64,10 +76,10 @@ int main() {
   // ------------------------------------------------------------------
   float vertices[] = {
       // positions          // texture coords
-      0.25f,  0.25f,  0.0f, 1.0f, 1.0f, // top right
-      0.25f,  -0.25f, 0.0f, 1.0f, 0.0f, // bottom right
-      -0.25f, -0.25f, 0.0f, 0.0f, 0.0f, // bottom left
-      -0.25f, 0.25f,  0.0f, 0.0f, 1.0f  // top left
+      0.15f,  0.15f,  0.0f, 1.0f, 1.0f, // top right
+      0.15f,  -0.15f, 0.0f, 1.0f, 0.0f, // bottom right
+      -0.15f, -0.15f, 0.0f, 0.0f, 0.0f, // bottom left
+      -0.15f, 0.15f,  0.0f, 0.0f, 1.0f  // top left
   };
   unsigned int indices[] = {
       0, 1, 3, // first triangle
@@ -185,11 +197,40 @@ int main() {
     // render container
     ourShader.use();
 
-    // create transformations
-    glm::mat4 transform = glm::mat4(1.0f);
-    transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-    transform = glm::rotate(transform, static_cast<float>(glfwGetTime()),
-        glm::vec3(0.0f, 0.0f, 1.0f));    
+    
+    //calculating delta time
+    float current_time = glfwGetTime();
+    delta_time = current_time - previous_frame;
+    previous_frame = current_time;
+
+    // create transformations    
+    glm::vec3 direction = glm::vec3(0.0f, 0.0f, 0.0f);
+    //rotation transformation to our pacman character
+    if (pacman_direction == "right") {
+        rotation_angle = 0.0f;
+        direction = glm::vec3(1.0f, 0.0f, 0.0f);
+    }
+    else if (pacman_direction == "left") {
+        rotation_angle = 180.0f;
+        direction = glm::vec3(-1.0f, 0.0f, 0.0f);
+    }
+    else if (pacman_direction == "down") {
+        rotation_angle = -90.0f;
+        direction = glm::vec3(0.0f, -1.0f, 0.0f);
+    }
+    else if (pacman_direction == "up") {
+        rotation_angle = 90.0f;
+        direction = glm::vec3(0.0f, 1.0f, 0.0f);
+    }
+    
+    if (pacman_direction != "none") {
+        //translation transformation to our pacman character
+        position = glm::translate(position, direction * speed * delta_time);       
+    }
+        
+    //then applying the rotation        
+    glm::mat4 transform = position;
+    transform = glm::rotate(transform, glm::radians(rotation_angle), glm::vec3(0.0f, 0.0f, 1.0f));
 
     unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
@@ -225,7 +266,17 @@ void processInput(GLFWwindow *window) {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
 
-  //based on input do transformations
+  //inputs for the pacman character movement
+  if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+      pacman_direction = "up";
+  else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+      pacman_direction = "down";
+  else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+      pacman_direction = "left";
+  else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+      pacman_direction = "right";
+  else
+      pacman_direction = "none";
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback
