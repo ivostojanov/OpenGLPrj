@@ -64,10 +64,10 @@ int main() {
   // ------------------------------------------------------------------
   float vertices[] = {
       // positions          // texture coords
-      0.5f,  0.5f,  0.0f, 1.0f, 1.0f, // top right
-      0.5f,  -0.5f, 0.0f, 1.0f, 0.0f, // bottom right
-      -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
-      -0.5f, 0.5f,  0.0f, 0.0f, 1.0f  // top left
+      0.25f,  0.25f,  0.0f, 1.0f, 1.0f, // top right
+      0.25f,  -0.25f, 0.0f, 1.0f, 0.0f, // bottom right
+      -0.25f, -0.25f, 0.0f, 0.0f, 0.0f, // bottom left
+      -0.25f, 0.25f,  0.0f, 0.0f, 1.0f  // top left
   };
   unsigned int indices[] = {
       0, 1, 3, // first triangle
@@ -110,8 +110,8 @@ int main() {
       GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   // set texture filtering parameters
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   // load image, create texture and generate mipmaps
   int width, height, nrChannels;
   stbi_set_flip_vertically_on_load(
@@ -141,7 +141,7 @@ int main() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   // load image, create texture and generate mipmaps
-  data = stbi_load("../res/textures/awesomeface.png", &width, &height,
+  data = stbi_load("../res/textures/pacman.png", &width, &height,
                    &nrChannels, 0);
   if (data) {
     // note that the awesomeface.png has transparency and thus an alpha channel,
@@ -173,7 +173,7 @@ int main() {
 
     // render
     // ------
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     // bind textures on corresponding texture units
@@ -182,14 +182,14 @@ int main() {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texture2);
 
+    // render container
+    ourShader.use();
+
     // create transformations
     glm::mat4 transform = glm::mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
     transform = glm::rotate(transform, static_cast<float>(glfwGetTime()),
-                            glm::vec3(0.0f, 0.0f, 1.0f));
-
-    // render container
-    ourShader.use();
+        glm::vec3(0.0f, 0.0f, 1.0f));    
 
     unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
@@ -224,6 +224,8 @@ int main() {
 void processInput(GLFWwindow *window) {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
+
+  //based on input do transformations
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback
