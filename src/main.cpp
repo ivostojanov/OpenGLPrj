@@ -222,11 +222,9 @@ int main() {
         rotation_angle = 90.0f;
         direction = glm::vec3(0.0f, 1.0f, 0.0f);
     }
-    
-    if (pacman_direction != "none") {
-        //translation transformation to our pacman character
-        position = glm::translate(position, direction * speed * delta_time);       
-    }
+        
+    //translation transformation to our pacman character
+    position = glm::translate(position, direction * speed * delta_time);           
         
     //then applying the rotation        
     glm::mat4 transform = position;
