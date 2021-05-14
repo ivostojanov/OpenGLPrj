@@ -29,151 +29,94 @@ float previous_frame = glfwGetTime();
 
 
 int main() {
-  // glfw: initialize and configure
-  // ------------------------------
-  glfwInit();
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    // glfw: initialize and configure
+      // ------------------------------
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 #ifdef __APPLE__
-  glfwWindowHint(
-      GLFW_OPENGL_FORWARD_COMPAT,
-      GL_TRUE); // uncomment this statement to fix compilation on OS X
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
 #endif
 
-  // glfw window creation
-  // --------------------
-  GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT,
-                                        program_name.c_str(), nullptr, nullptr);
-  if (window == nullptr) {
-    std::cout << "Failed to create GLFW window" << std::endl;
-    glfwTerminate();
-    return -1;
-  }
-  glfwMakeContextCurrent(window);
-  glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    // glfw window creation
+    // --------------------
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, program_name.c_str(), nullptr, nullptr);
+    if (window == nullptr)
+    {
+        std::cout << "Failed to create GLFW window" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+    glfwMakeContextCurrent(window);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-  // glad: load all OpenGL function pointers
-  // ---------------------------------------
-  if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
-    std::cout << "Failed to initialize GLAD" << std::endl;
-    return -1;
-  }
+    // glad: load all OpenGL function pointers
+    // ---------------------------------------
+    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
+    {
+        std::cout << "Failed to initialize GLAD" << std::endl;
+        return -1;
+    }
 
-  // build and compile our shader program
-  // ------------------------------------
-
-  std::string shader_location("../res/shaders/");
-
-  std::string used_shaders("shader");
-
-  Shader ourShader(shader_location + used_shaders + std::string(".vert"),
-                   shader_location + used_shaders + std::string(".frag"));
+    // build and compile our shader program
+    // ------------------------------------
+    Shader ourShader("../res/shaders/shader.vert",
+        "../res/shaders/shader.frag"
+    );
 
   // set up vertex data (and buffer(s)) and configure vertex attributes
-  // ------------------------------------------------------------------
-  float vertices[] = {
-      // positions          // texture coords
-      0.15f,  0.15f,  0.0f, 1.0f, 1.0f, // top right
-      0.15f,  -0.15f, 0.0f, 1.0f, 0.0f, // bottom right
-      -0.15f, -0.15f, 0.0f, 0.0f, 0.0f, // bottom left
-      -0.15f, 0.15f,  0.0f, 0.0f, 1.0f  // top left
-  };
-  unsigned int indices[] = {
-      0, 1, 3, // first triangle
-      1, 2, 3  // second triangle
-  };
+    // ------------------------------------------------------------------
 
-  unsigned int VBO, VAO, EBO;
+  std::vector<float> vertices;
+
+  float const PI_OVER_4 = glm::quarter_pi<float>();
+  float const PI = glm::pi<float>();
+
+  // Starting angle is not 0, but PI/8
+  float base_angle = PI/2.0f/9.0f/2.0f;
+  float angle = 3*base_angle;
+
+
+  for (auto i = 0; i < 3; i++)
+      vertices.push_back(0.0f);
+
+  float scale = 0.25f;
+  for (auto i = 0; i < (2*PI/base_angle)-5; i++) {
+      vertices.push_back(glm::cos(angle)*scale);
+      vertices.push_back(glm::sin(angle)*scale);
+      vertices.push_back(0.0f);
+      angle += base_angle;
+  }
+
+  unsigned int VBO, VAO;
   glGenVertexArrays(1, &VAO);
   glGenBuffers(1, &VBO);
-  glGenBuffers(1, &EBO);
-
+  // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
   glBindVertexArray(VAO);
 
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
-               GL_STATIC_DRAW);
-
-  // position attribute
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
-                        static_cast<void *>(nullptr));
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), static_cast<void*>(nullptr));
   glEnableVertexAttribArray(0);
-  // texture coord attribute
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
-                        reinterpret_cast<void *>(3 * sizeof(float)));
+
+
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
   glEnableVertexAttribArray(1);
 
-  // load and create a texture
-  // -------------------------
-  unsigned int texture1, texture2;
-  // texture 1
-  // ---------
-  glGenTextures(1, &texture1);
-  glBindTexture(GL_TEXTURE_2D, texture1);
-  // set the texture wrapping parameters
-  glTexParameteri(
-      GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-      GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  // set texture filtering parameters
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  // load image, create texture and generate mipmaps
-  int width, height, nrChannels;
-  stbi_set_flip_vertically_on_load(
-      true); // tell stb_image.h to flip loaded texture's on the y-axis.
-  // The FileSystem::getPath(...) is part of the GitHub repository so we can
-  // find files on any IDE/platform; replace it with your own image path.
-  unsigned char *data = stbi_load("../res/textures/container.jpg", &width,
-                                  &height, &nrChannels, 0);
-  if (data) {
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-                 GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-  } else {
-    std::cout << "Failed to load texture" << std::endl;
-  }
-  stbi_image_free(data);
-  // texture 2
-  // ---------
-  glGenTextures(1, &texture2);
-  glBindTexture(GL_TEXTURE_2D, texture2);
-  // set the texture wrapping parameters
-  glTexParameteri(
-      GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-      GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  // set texture filtering parameters
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  // load image, create texture and generate mipmaps
-  data = stbi_load("../res/textures/pacman.png", &width, &height,
-                   &nrChannels, 0);
-  if (data) {
-    // note that the awesomeface.png has transparency and thus an alpha channel,
-    // so make sure to tell OpenGL the data type is of GL_RGBA
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-  } else {
-    std::cout << "Failed to load texture" << std::endl;
-  }
-  stbi_image_free(data);
+  // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
+  // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+  // glBindVertexArray(0);
 
-  // tell opengl for each sampler to which texture unit it belongs to (only has
-  // to be done once)
-  // -------------------------------------------------------------------------------------------
-  ourShader.use(); // don't forget to activate/use the shader before setting
-                   // uniforms!
-  // either set it manually like so:
-  glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0);
-  // or set it via the texture class
-  ourShader.setInt("texture2", 1);
+
+  // bind the VAO (it was already bound, but just to demonstrate): seeing as we only have a single VAO we can
+  // just bind it beforehand before rendering the respective triangle; this is another approach.
+  glBindVertexArray(VAO);
+
+  // uncomment this call to draw in wireframe polygons.
+  //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
   // render loop
   // -----------
@@ -187,21 +130,18 @@ int main() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // bind textures on corresponding texture units
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture1);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, texture2);
-
     // render container
     ourShader.use();
+    glBindVertexArray(VAO);
 
-    
+    glDrawArrays(GL_TRIANGLE_FAN, 0, (vertices.size()/3)-1);
+        
     //calculating delta time
     float current_time = glfwGetTime();
     delta_time = current_time - previous_frame;
     previous_frame = current_time;
 
+    
     // create transformations    
     glm::vec3 direction = glm::vec3(0.0f, 0.0f, 0.0f);
     //rotation transformation to our pacman character
@@ -209,16 +149,16 @@ int main() {
         rotation_angle = 0.0f;
         direction = glm::vec3(1.0f, 0.0f, 0.0f);
     }
-    else if (pacman_direction == "left") {
+    else if (pacman_direction == "left") {        
         rotation_angle = 180.0f;
         direction = glm::vec3(-1.0f, 0.0f, 0.0f);
     }
     else if (pacman_direction == "down") {
-        rotation_angle = -90.0f;
+        rotation_angle = 90.0f;
         direction = glm::vec3(0.0f, -1.0f, 0.0f);
     }
     else if (pacman_direction == "up") {
-        rotation_angle = 90.0f;
+        rotation_angle = -90.0f;
         direction = glm::vec3(0.0f, 1.0f, 0.0f);
     }
         
@@ -228,18 +168,10 @@ int main() {
     //then applying the rotation        
     glm::mat4 transform = position;
     transform = glm::rotate(transform, glm::radians(rotation_angle), glm::vec3(0.0f, 0.0f, 1.0f));
-
+    
     unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
-
-    // render container
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,
-                   static_cast<void *>(nullptr));
-
-    // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved
-    // etc.)
-    // -------------------------------------------------------------------------------
+    
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
@@ -248,7 +180,6 @@ int main() {
   // ------------------------------------------------------------------------
   glDeleteVertexArrays(1, &VAO);
   glDeleteBuffers(1, &VBO);
-  glDeleteBuffers(1, &EBO);
 
   // glfw: terminate, clearing all previously allocated GLFW resources.
   // ------------------------------------------------------------------
