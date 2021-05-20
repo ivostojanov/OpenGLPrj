@@ -60,56 +60,214 @@ int main()
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
+    std::vector<float> combined_vertices;
+
     int number_of_rectangles = 6;
-    float vertices[] = {
+    float vertices_letter_i[] = {
         // X     Y      Z     R     G     B     T1    T2
-        -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,//#1 duplicate
-         0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f,//#2 duplicate
-         0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f,//#2 duplicate
-        -0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,//#1 duplicate
+        //back
+        -0.5f, -1.0f, -0.5f, 0.0f, 0.2f, 0.8f, 0.0f, 0.0f,//#1 duplicate
+         0.5f, -1.0f, -0.5f, 0.0f, 0.2f, 0.8f, 1.0f, 0.0f,
+         0.5f,  1.0f, -0.5f, 0.0f, 0.2f, 0.8f, 1.0f, 1.0f,//#2 duplicate
+         0.5f,  1.0f, -0.5f, 0.0f, 0.2f, 0.8f, 1.0f, 1.0f,//#2 duplicate
+        -0.5f,  1.0f, -0.5f, 0.0f, 0.2f, 0.8f, 0.0f, 1.0f,
+        -0.5f, -1.0f, -0.5f, 0.0f, 0.2f, 0.8f, 0.0f, 0.0f,//#1 duplicate
+        //front
+        -0.5f, -1.0f,  0.5f, 0.0f, 0.2f, 0.8f,  0.0f, 0.0f,//#1 duplicate
+         0.5f, -1.0f,  0.5f, 0.0f, 0.2f, 0.8f,  1.0f, 0.0f,
+         0.5f,  1.0f,  0.5f, 0.0f, 0.2f, 0.8f,  1.0f, 1.0f,//#2 duplicate
+         0.5f,  1.0f,  0.5f, 0.0f, 0.2f, 0.8f,  1.0f, 1.0f,//#2 duplicate
+        -0.5f,  1.0f,  0.5f, 0.0f, 0.2f, 0.8f,  0.0f, 1.0f,
+        -0.5f, -1.0f,  0.5f, 0.0f, 0.2f, 0.8f,  0.0f, 0.0f,//#1 duplicate
+        //sides
+        -0.5f,  1.0f,  0.5f, 0.0f, 0.2f, 0.8f,  1.0f, 0.0f,//#1 duplicate
+        -0.5f,  1.0f, -0.5f, 0.0f, 0.2f, 0.8f,  1.0f, 1.0f,
+        -0.5f, -1.0f, -0.5f, 0.0f, 0.2f, 0.8f,  0.0f, 1.0f,//#2 duplicate
+        -0.5f, -1.0f, -0.5f, 0.0f, 0.2f, 0.8f,  0.0f, 1.0f,//#2 duplicate
+        -0.5f, -1.0f,  0.5f, 0.0f, 0.2f, 0.8f,  0.0f, 0.0f,
+        -0.5f,  1.0f,  0.5f, 0.0f, 0.2f, 0.8f,  1.0f, 0.0f,//#1 duplicate
 
-        -0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f,  0.0f, 0.0f,//#1 duplicate
-         0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 1.0f,  1.0f, 1.0f,//#2 duplicate
-         0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 1.0f,  1.0f, 1.0f,//#2 duplicate
-        -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 1.0f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f,  0.0f, 0.0f,//#1 duplicate
+         0.5f,  1.0f,  0.5f, 0.0f, 0.0f, 0.5f,  1.0f, 0.0f,//#1 duplicate
+         0.5f,  1.0f, -0.5f, 0.0f, 0.0f, 0.5f,  1.0f, 1.0f,
+         0.5f, -1.0f, -0.5f, 0.0f, 0.0f, 0.5f,  0.0f, 1.0f,//#2 duplicate
+         0.5f, -1.0f, -0.5f, 0.0f, 0.0f, 0.5f,  0.0f, 1.0f,//#2 duplicate
+         0.5f, -1.0f,  0.5f, 0.0f, 0.0f, 0.5f,  0.0f, 0.0f,
+         0.5f,  1.0f,  0.5f, 0.0f, 0.0f, 0.5f,  1.0f, 0.0f,//#1 duplicate
 
-        -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f,  1.0f, 0.0f,//#1 duplicate
-        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f,  0.0f, 1.0f,//#2 duplicate
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f,  0.0f, 1.0f,//#2 duplicate
-        -0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 1.0f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f,  1.0f, 0.0f,//#1 duplicate
-
-         0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f,  1.0f, 0.0f,//#1 duplicate
-         0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f,  1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,  0.0f, 1.0f,//#2 duplicate
-         0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,  0.0f, 1.0f,//#2 duplicate
-         0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f,  1.0f, 0.0f,//#1 duplicate
-
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  0.0f, 1.0f,//#1 duplicate
-         0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f,  1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f, 1.0f, 0.5f, 1.0f,  1.0f, 0.0f,//#2 duplicate
-         0.5f, -0.5f,  0.5f, 1.0f, 0.5f, 0.0f,  1.0f, 0.0f,//#2 duplicate
-        -0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 1.0f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  0.0f, 1.0f,//#1 duplicate
-
-        -0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f,  0.0f, 1.0f,//#1 duplicate
-         0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 1.0f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f, 0.5f, 0.5f, 0.5f,  1.0f, 0.0f,//#2 duplicate
-         0.5f,  0.5f,  0.5f, 0.5f, 0.5f, 0.5f,  1.0f, 0.0f,//#2 duplicate
-        -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f,  0.0f, 1.0f //#1 duplicate
+         //bottom
+        -0.5f, -1.0f, -0.5f, 0.0f, 0.2f, 0.8f,  0.0f, 1.0f,//#1 duplicate
+         0.5f, -1.0f, -0.5f, 0.0f, 0.2f, 0.8f,  1.0f, 1.0f,
+         0.5f, -1.0f,  0.5f, 0.0f, 0.2f, 0.8f,  1.0f, 0.0f,//#2 duplicate
+         0.5f, -1.0f,  0.5f, 0.0f, 0.2f, 0.8f,  1.0f, 0.0f,//#2 duplicate
+        -0.5f, -1.0f,  0.5f, 0.0f, 0.2f, 0.8f,  0.0f, 0.0f,
+        -0.5f, -1.0f, -0.5f, 0.0f, 0.2f, 0.8f,  0.0f, 1.0f,//#1 duplicate
+        //top
+        -0.5f,  1.0f, -0.5f, 0.0f, 0.0f, 0.8f,  0.0f, 1.0f,//#1 duplicate
+         0.5f,  1.0f, -0.5f, 0.0f, 0.0f, 0.8f,  1.0f, 1.0f,
+         0.5f,  1.0f,  0.5f, 0.0f, 0.0f, 0.8f,  1.0f, 0.0f,//#2 duplicate
+         0.5f,  1.0f,  0.5f, 0.0f, 0.0f, 0.8f,  1.0f, 0.0f,//#2 duplicate
+        -0.5f,  1.0f,  0.5f, 0.0f, 0.0f, 0.8f,  0.0f, 0.0f,
+        -0.5f,  1.0f, -0.5f, 0.0f, 0.0f, 0.8f,  0.0f, 1.0f //#1 duplicate
     };
+
+    std::vector<float> vertices_letter_o1;    
+
+    float PI = glm::pi<float>();
+    float base_angle = PI / 2 / 9;
+    float angle = 0;
+
+    //adding the letter o vertices
+     
+    float R, G, B;
+    R = 48.0f/255.0f;
+    G = 145.0f/255.0f;
+    B = 206.0f/255.0f;
+
+    float scaling = 1.0f;
+    float lowerscaling = 0.60f;
+     
+    //upper part of O
+    for (int i = 0; i < 36+1; i++) {
+        float x = cos(angle);
+        float y = sin(angle);
+        float z = 0.1f;        
+
+        vertices_letter_o1.push_back(x*scaling);
+        vertices_letter_o1.push_back(y*scaling);
+        vertices_letter_o1.push_back(z*scaling);
+
+        vertices_letter_o1.push_back(R);
+        vertices_letter_o1.push_back(G);
+        vertices_letter_o1.push_back(B);
+
+        vertices_letter_o1.push_back(1.0f);
+        vertices_letter_o1.push_back(1.0f);
+
+        vertices_letter_o1.push_back(x*scaling);
+        vertices_letter_o1.push_back(y*scaling);
+        vertices_letter_o1.push_back(z*(-1)*scaling);
+
+        vertices_letter_o1.push_back(R);
+        vertices_letter_o1.push_back(G);
+        vertices_letter_o1.push_back(B);
+
+        vertices_letter_o1.push_back(1.0f);
+        vertices_letter_o1.push_back(1.0f);
+
+        angle += base_angle;
+    }
+    
+    //frontal mid section
+    for (int i = 0; i < 36 + 1; i++) {
+        float x = cos(angle);
+        float y = sin(angle);
+        float z = 0.1f;          
+
+        vertices_letter_o1.push_back(x * scaling);
+        vertices_letter_o1.push_back(y * scaling);
+        vertices_letter_o1.push_back(z * scaling);
+
+        vertices_letter_o1.push_back(R);
+        vertices_letter_o1.push_back(G);
+        vertices_letter_o1.push_back(B);
+
+        vertices_letter_o1.push_back(1.0f);
+        vertices_letter_o1.push_back(1.0f);
+
+        vertices_letter_o1.push_back(x * lowerscaling);
+        vertices_letter_o1.push_back(y * lowerscaling);
+        vertices_letter_o1.push_back(z * lowerscaling);
+
+        vertices_letter_o1.push_back(R);
+        vertices_letter_o1.push_back(G);
+        vertices_letter_o1.push_back(B);
+
+        vertices_letter_o1.push_back(1.0f);
+        vertices_letter_o1.push_back(1.0f);
+
+        angle += base_angle;
+    }
+    
+    //Lower part of the letter O
+    for (int i = 0; i < 36 + 1; i++) {
+        float x = cos(angle);
+        float y = sin(angle);
+        float z = 0.1f;        
+
+        vertices_letter_o1.push_back(x * lowerscaling);
+        vertices_letter_o1.push_back(y * lowerscaling);
+        vertices_letter_o1.push_back(z * lowerscaling);
+
+        vertices_letter_o1.push_back(R);
+        vertices_letter_o1.push_back(G);
+        vertices_letter_o1.push_back(B);
+
+        vertices_letter_o1.push_back(1.0f);
+        vertices_letter_o1.push_back(1.0f);
+
+        vertices_letter_o1.push_back(x * lowerscaling);
+        vertices_letter_o1.push_back(y * lowerscaling);
+        vertices_letter_o1.push_back(z * (-1) * lowerscaling);
+
+        vertices_letter_o1.push_back(R);
+        vertices_letter_o1.push_back(G);
+        vertices_letter_o1.push_back(B);
+
+        vertices_letter_o1.push_back(1.0f);
+        vertices_letter_o1.push_back(1.0f);
+
+        angle += base_angle;
+    }
+
+    //back midsection of O
+    //frontal mid section
+    for (int i = 0; i < 36 + 1; i++) {
+        float x = cos(angle);
+        float y = sin(angle);
+        float z = 0.1f*(-1);
+
+        vertices_letter_o1.push_back(x * scaling);
+        vertices_letter_o1.push_back(y * scaling);
+        vertices_letter_o1.push_back(z * scaling);
+
+        vertices_letter_o1.push_back(R);
+        vertices_letter_o1.push_back(G);
+        vertices_letter_o1.push_back(B);
+
+        vertices_letter_o1.push_back(1.0f);
+        vertices_letter_o1.push_back(1.0f);
+
+        vertices_letter_o1.push_back(x * lowerscaling);
+        vertices_letter_o1.push_back(y * lowerscaling);
+        vertices_letter_o1.push_back(z * lowerscaling);
+
+        vertices_letter_o1.push_back(R);
+        vertices_letter_o1.push_back(G);
+        vertices_letter_o1.push_back(B);
+
+        vertices_letter_o1.push_back(1.0f);
+        vertices_letter_o1.push_back(1.0f);
+
+        angle += base_angle;
+    }
+
+    //combining all the vertices together
+    for (auto i = 0; i < number_of_rectangles * 6 * 8; i++) {
+        combined_vertices.push_back(vertices_letter_i[i]);
+    }    
+
+    //adding the vertices from the letter_o
+    for (int i = 0; i < vertices_letter_o1.size(); i += 1)
+    {
+        combined_vertices.push_back(vertices_letter_o1[i]);
+    }
+
     // world space positions of our cubes
     glm::vec3 cubePositions[] = {
         glm::vec3(0.0f,  0.0f,  0.0f),
-        glm::vec3(2.0f,  5.0f, -15.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-2.0f,  0.0f, -7.0f),
+        glm::vec3(-2.0f,  0.0f, -5.5f),
+        glm::vec3(2.0f,  0.0f, -5.5f),
         glm::vec3(-3.8f, -2.0f, -12.3f),
         glm::vec3(2.4f, -0.4f, -3.5f),
         glm::vec3(-1.7f,  3.0f, -7.5f),
@@ -125,7 +283,7 @@ int main()
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * combined_vertices.size(), &combined_vertices[0], GL_STATIC_DRAW);
 
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
@@ -143,6 +301,9 @@ int main()
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     // -------------------------------------------------------------------------------------------
     ourShader.use();
+
+    // uncomment this call to draw in wireframe polygons.
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 
     // render loop
@@ -174,23 +335,37 @@ int main()
         int viewLoc = glGetUniformLocation(ourShader.ID, "view");
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));        
 
-                
-        // render boxes
+        
+        // rendering the letter i
         glBindVertexArray(VAO);
         //for (unsigned int i = 0; i < 10; i++)
         
         // calculate the model matrix for each object and pass it to shader before drawing
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, cubePositions[0]);
+        model = glm::translate(model, cubePositions[1]);
         float angle = 20.0f * 1;//fomely 1 was i
-        model = glm::rotate(model, glm::radians(50.0f), glm::vec3(1.0f, 0.3f, 0.5f));
+        model = glm::rotate(model, glm::radians(25.0f), glm::vec3(1.0f, 0.0f, 0.0f));
             
         model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
         int modelLoc = glGetUniformLocation(ourShader.ID, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
         glDrawArrays(GL_TRIANGLES, 0, number_of_rectangles*6);
-        
+
+        //rendering the letter o
+        glBindVertexArray(VAO);
+
+        // calculate the model matrix for each object and pass it to shader before drawing
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, cubePositions[3]);
+        angle = 20.0f * 1;//fomely 1 was i
+        model = glm::rotate(model, glm::radians(25.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+        modelLoc = glGetUniformLocation(ourShader.ID, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+        glDrawArrays(GL_TRIANGLE_STRIP, (number_of_rectangles * 6), vertices_letter_o1.size()/8);//drawing type, starting index, vertices count
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
