@@ -220,7 +220,6 @@ int main()
     }
 
     //back midsection of O
-    //frontal mid section
     for (int i = 0; i < 36 + 1; i++) {
         float x = cos(angle);
         float y = sin(angle);
