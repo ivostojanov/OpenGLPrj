@@ -18,7 +18,7 @@ void processInput(GLFWwindow *window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 800;
 
-glm::mat4 position = glm::mat4(1.0f);
+glm::mat4 transform = glm::mat4(1.0f);
 
 std::string pacman_direction = "right";
 float speed = 0.5f;
@@ -62,9 +62,7 @@ int main() {
 
     // build and compile our shader program
     // ------------------------------------
-    Shader ourShader("../res/shaders/shader.vert",
-        "../res/shaders/shader.frag"
-    );
+    Shader ourShader("../res/shaders/shader.vert","../res/shaders/shader.frag");
 
   // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -139,9 +137,8 @@ int main() {
     //calculating delta time
     float current_time = glfwGetTime();
     delta_time = current_time - previous_frame;
-    previous_frame = current_time;
+    previous_frame = current_time; 
 
-    
     // create transformations    
     glm::vec3 direction = glm::vec3(0.0f, 0.0f, 0.0f);
     //rotation transformation to our pacman character
@@ -154,23 +151,22 @@ int main() {
         direction = glm::vec3(-1.0f, 0.0f, 0.0f);
     }
     else if (pacman_direction == "down") {
-        rotation_angle = 90.0f;
+        rotation_angle = -90.0f;
         direction = glm::vec3(0.0f, -1.0f, 0.0f);
     }
-    else if (pacman_direction == "up") {
-        rotation_angle = -90.0f;
+    else if (pacman_direction == "up") {        
+        rotation_angle = 90.0f;
         direction = glm::vec3(0.0f, 1.0f, 0.0f);
-    }
+    }   
+
+    // calculate the model matrix for each object and pass it to shader before drawing        
+    transform = glm::translate(transform, direction*delta_time*speed);    
         
-    //translation transformation to our pacman character
-    position = glm::translate(position, direction * speed * delta_time);           
-        
-    //then applying the rotation        
-    glm::mat4 transform = position;
-    transform = glm::rotate(transform, glm::radians(rotation_angle), glm::vec3(0.0f, 0.0f, 1.0f));
+    //then applying the rotation            
+    glm::mat4 model = glm::rotate(transform, glm::radians(rotation_angle), glm::vec3(0.0f, 0.0f, 1.0f));
     
     unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
-    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(model));
     
     glfwSwapBuffers(window);
     glfwPollEvents();
