@@ -66,9 +66,9 @@ int main()
     float PI = glm::pi<float>();    
      
     float R, G, B;
-    R = 48.0f/255.0f;
-    G = 145.0f/255.0f;
-    B = 206.0f/255.0f;
+    R = 255.0f/255.0f;
+    G = 255.0f/255.0f;
+    B = 0.0f/255.0f;
 
     float scaling = 1.0f;
     float lowerscaling = 0.98f;
@@ -80,7 +80,7 @@ int main()
     float z_base_angle = PI/2/9;
     float z_angle = 0.0f;
     
-    for (int s = 0; s < ((2*PI)/z_base_angle)+1; s++) {      
+    for (int s = 0; s < ((3 * PI)/2 / z_base_angle); s++) {
         
         for (int i = 0; i < (PI / base_angle) + 1; i++) {                        
             float x = cos(z_angle)*cos(angle);
@@ -111,10 +111,10 @@ int main()
             vertices.push_back(B);
 
             vertices.push_back(1.0f);
-            vertices.push_back(1.0f);
+            vertices.push_back(1.0f);        
 
             angle += base_angle;
-        }
+        }       
         angle = -(PI / 2);
         z_angle += z_base_angle;
     }
@@ -151,7 +151,7 @@ int main()
     ourShader.use();
 
     // uncomment this call to draw in wireframe polygons.
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 
     // render loop
@@ -189,9 +189,9 @@ int main()
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, cubePositions[0]);
         angle = 20.0f * 1;//fomely 1 was i
-        model = glm::rotate(model, glm::radians(45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        //model = glm::rotate(model, glm::radians(45.0f*4.5f), glm::vec3(0.5f, 1.0f, 0.0f));
 
-        //model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
         int modelLoc = glGetUniformLocation(ourShader.ID, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
