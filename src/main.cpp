@@ -63,11 +63,7 @@ int main()
     
     std::vector<float> vertices;  
 
-    float PI = glm::pi<float>();
-    float base_angle = PI / 2 / 9;
-    float angle = 0;
-
-    //adding the letter o vertices
+    float PI = glm::pi<float>();    
      
     float R, G, B;
     R = 48.0f/255.0f;
@@ -76,38 +72,52 @@ int main()
 
     float scaling = 1.0f;
     float lowerscaling = 0.98f;
+
+    float base_angle = PI/2/9;
+    float angle = -(PI/2);
      
-    //upper part of O
-    for (int i = 0; i < 36+1; i++) {
-        float x = cos(angle);
-        float y = sin(angle);
-        float z = 0.0f;        
-
-        //1st side
-        vertices.push_back(x*scaling);
-        vertices.push_back(y*scaling);
-        vertices.push_back(z*scaling);
-
-        vertices.push_back(R);
-        vertices.push_back(G);
-        vertices.push_back(B);
-
-        vertices.push_back(1.0f);
-        vertices.push_back(1.0f);
+    //creating a sphere
+    float z_base_angle = PI/2/9;
+    float z_angle = 0.0f;
+    
+    for (int s = 0; s < ((2*PI)/z_base_angle)+1; s++) {      
         
-        vertices.push_back(x*lowerscaling);
-        vertices.push_back(y*lowerscaling);
-        vertices.push_back((z+0.05)*lowerscaling);
+        for (int i = 0; i < (PI / base_angle) + 1; i++) {                        
+            float x = cos(z_angle)*cos(angle);
+            float y = cos(z_angle)*sin(angle);
+            float z = sin(z_angle);
+            //1st side
+            vertices.push_back(x);
+            vertices.push_back(y);
+            vertices.push_back(z);
 
-        vertices.push_back(R);
-        vertices.push_back(G);
-        vertices.push_back(B);
+            vertices.push_back(R);
+            vertices.push_back(G);
+            vertices.push_back(B);
 
-        vertices.push_back(1.0f);
-        vertices.push_back(1.0f);        
+            vertices.push_back(1.0f);
+            vertices.push_back(1.0f);
 
-        angle += base_angle;
-    }    
+            //2nd line
+            x = cos(z_angle+z_base_angle) * cos(angle);
+            y = cos(z_angle+z_base_angle) * sin(angle);
+            z = sin(z_angle+z_base_angle);
+            vertices.push_back(x);
+            vertices.push_back(y);
+            vertices.push_back(z);
+
+            vertices.push_back(R);
+            vertices.push_back(G);
+            vertices.push_back(B);
+
+            vertices.push_back(1.0f);
+            vertices.push_back(1.0f);
+
+            angle += base_angle;
+        }
+        angle = -(PI / 2);
+        z_angle += z_base_angle;
+    }
 
     // world space positions of our cubes
     glm::vec3 cubePositions[] = {
@@ -179,9 +189,9 @@ int main()
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, cubePositions[0]);
         angle = 20.0f * 1;//fomely 1 was i
-        model = glm::rotate(model, glm::radians(25.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
-        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+        //model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
         int modelLoc = glGetUniformLocation(ourShader.ID, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
